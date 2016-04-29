@@ -3,14 +3,10 @@
  *  Task
  */
 
-import { Observable } from 'rxjs'
+import most from 'most'
+import { identity } from 'ramda'
 
 export const map = (func, taskA) =>
-  Observable.create((observer) =>
-    taskA.subscribe(
-      (a) => {
-        observer.next(func(a))
-        observer.complete()
-      }
-    )
-  )
+  most.create((add, end, error) =>
+    taskA.observe((a) => add(func(a)))
+  ).take(1)

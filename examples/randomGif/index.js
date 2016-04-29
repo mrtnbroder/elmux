@@ -1,7 +1,7 @@
 
 import React from 'react'
 import Perf from 'react/lib/ReactDefaultPerf'
-import { Observable } from 'rxjs'
+import most from 'most'
 import * as Effects from '../../src/Effects'
 
 const NEW_GIF = 'NEW_GIF'
@@ -46,7 +46,7 @@ export const update = (action, model) => {
 }
 
 const getRandomGif = (topic) => Effects.fromTask(
-  Observable.fromPromise(
+  most.fromPromise(
     fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=${topic}`)
       .then((r) => r.json())
       .then((r) => r.data.image_url)

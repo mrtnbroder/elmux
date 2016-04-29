@@ -4,7 +4,7 @@
  */
 
 import { render } from 'react-dom'
-import { Observable } from 'rxjs'
+import most from 'most'
 import * as Signal from './Signal'
 import * as Effects from './Effects'
 import { reduce, map, flip, nth, curry } from 'ramda'
@@ -19,8 +19,8 @@ export const StartApp = (config) => {
     return [newModel, Effects.batch(accumulatedEffects, additionalEffects)]
   }
   const update = (actions, [model]) => reduce(updateStep, [model, Effects.none()], actions)
-  const inputs = Observable.merge(messages.signal, map((signal) => map(singleton, signal), config.inputs))
-  const effectsAndModel = inputs.startWith(config.init).scan(flip(update)).publishReplay().refCount()
+  // const inputs = most.merge(messages.signal, map((signal) => map(singleton, signal), config.inputs))
+  const effectsAndModel = messages.stream.scan(flip(update), config.init).multicast()
   const model = effectsAndModel.map(nth(0))
   const html = model.map(curry(config.view)(address))
   const tasks = effectsAndModel.flatMap(([_, effect]) => Effects.toTask(address, effect))
@@ -28,9 +28,9 @@ export const StartApp = (config) => {
   return {
     model,
     html,
-    tasks: Observable.merge(
+    tasks: most.merge(
       tasks,
-      html.do(renderNext)
+      html.tap(renderNext)
     )
   }
 }
@@ -38,4 +38,4 @@ export const StartApp = (config) => {
 const root = document.querySelector('#root')
 const renderNext = (html) => render(html, root)
 
-export const runApp = (app) => Observable.merge(app.model, app.html, app.tasks).subscribe()
+export const runApp = (app) => most.merge(app.model, app.html, app.tasks).drain()

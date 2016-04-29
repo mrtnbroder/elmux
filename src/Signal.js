@@ -3,13 +3,16 @@
  *  Signal.js
  */
 
-import { Observable, BehaviorSubject } from 'rxjs'
+import most from 'most'
+import { subject } from 'most-subject'
 
 export const Mailbox = (initialValue) => {
-  const signal = new BehaviorSubject(initialValue)
-  const address = (message) => signal.next(message)
+  const { observer: signal, stream } = subject(initialValue)
+  const address = (message) => {
+    signal.next(message)
+  }
 
-  return { signal, address }
+  return { signal, stream, address }
 }
 
 export const forwardTo = (address, tag) =>
@@ -17,5 +20,5 @@ export const forwardTo = (address, tag) =>
 
 export const send = (address, message) => {
   address(message)
-  return Observable.empty()
+  return most.empty()
 }

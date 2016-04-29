@@ -3,20 +3,16 @@
  *  Effects.js
  */
 
-import { Observable } from 'rxjs/Observable'
+import most from 'most'
 import * as Signal from './Signal'
 import * as Task from './Task'
 
-export const none = Observable.empty
+export const none = most.empty
 
 export const fromTask = (task, success, failure) =>
-  Observable.create((observer) =>
-    task.subscribe(
-      (res) => observer.next(success(res)),
-      (err) => observer.next(failure(err)),
-      () => observer.complete()
-    )
-  )
+  most.create((add, end, err) =>
+    task.observe((res) => add(success(res))).catch((res) => err(failure(res)))
+  ).take(1)
 
 export const toTask = (address, effect) =>
   effect.flatMap((action) =>
@@ -24,7 +20,7 @@ export const toTask = (address, effect) =>
   )
 
 export const batch = (...effects) =>
-  Observable.merge(...effects)
+  most.merge(...effects)
 
 // TODO: needs to handle batched effects as well
 export const map = (func, effect) =>
