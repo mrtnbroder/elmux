@@ -3,7 +3,6 @@
  *  Start-App.js
  */
 
-import { render } from 'react-dom'
 import { Observable } from 'rxjs'
 import * as Signal from './Signal'
 import * as Effects from './Effects'
@@ -28,14 +27,8 @@ export const StartApp = (config) => {
   return {
     model,
     html,
-    tasks: Observable.merge(
-      tasks,
-      html.do(renderNext)
-    )
+    tasks
   }
 }
-
-const root = document.querySelector('#root')
-const renderNext = (html) => render(html, root)
 
 export const runApp = (app) => Observable.merge(app.model, app.html, app.tasks).subscribe()
