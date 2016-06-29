@@ -5,6 +5,8 @@
 
 import { Observable, BehaviorSubject } from 'rxjs'
 
+export const merge = Observable.merge
+
 export const Mailbox = (initialValue) => {
   const signal = new BehaviorSubject(initialValue)
   const address = (message) => signal.next(message)
