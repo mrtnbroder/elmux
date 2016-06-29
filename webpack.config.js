@@ -9,7 +9,9 @@ module.exports = {
   },
   output: {
     path: '.',
-    filename: 'bundle.js'
+    libraryTarget: 'umd',
+    library: 'elmux',
+    filename: 'index.js'
   },
   module: {
     loaders: [
