@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --inline --entry ./src/index.js",
-    "build": "webpack ./src/index.js"
+    "build": "webpack ./src/index.js",
+    "preinstall": "npm run build"
   },
   "repository": {
     "type": "git",
