@@ -1,6 +1,5 @@
 
 import React from 'react'
-import Perf from 'react/lib/ReactDefaultPerf'
 import { Observable } from 'rxjs'
 import * as Effects from '../../src/Effects'
 
@@ -54,5 +53,3 @@ const getRandomGif = (topic) => Effects.fromTask(
   Action.newGif,
   Action.gifError
 )
-
-window.Perf = Perf
