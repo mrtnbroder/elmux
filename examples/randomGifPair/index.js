@@ -1,6 +1,5 @@
 
 import React from 'react'
-import { Observable } from 'rxjs'
 import * as Signal from '../../src/Signal'
 import * as Effects from '../../src/Effects'
 import * as randomGif from '../randomGif'
