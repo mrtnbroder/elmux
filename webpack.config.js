@@ -8,7 +8,7 @@ module.exports = {
     extensions: ['', '.js', 'jsx'],
   },
   output: {
-    path: '.',
+    path: './lib',
     libraryTarget: 'umd',
     library: 'elmux',
     filename: 'index.js'
