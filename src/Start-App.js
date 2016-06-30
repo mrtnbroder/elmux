@@ -21,14 +21,14 @@ export const StartApp = (config) => {
   const inputs = Observable.merge(messages.signal, map((signal) => map(singleton, signal), config.inputs))
   const effectsAndModel = inputs.startWith(config.init).scan(flip(update)).publishReplay().refCount()
   const model = effectsAndModel.map(nth(0))
-  const html = model.map(curry(config.view)(address))
   const tasks = effectsAndModel.flatMap(([_, effect]) => Effects.toTask(address, effect))
 
   return {
     model,
-    html,
-    tasks
+    tasks,
+    address,
+    initalState: nth(0)(config.init)
   }
 }
 
-export const runApp = (app) => Observable.merge(app.model, app.html, app.tasks).subscribe()
+export const runApp = (app) => Observable.merge(app.model, app.tasks).subscribe()
