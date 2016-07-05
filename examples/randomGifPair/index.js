@@ -4,13 +4,19 @@ import * as Signal from '../../src/Signal'
 import * as Effects from '../../src/Effects'
 import * as randomGif from '../randomGif'
 
+// -- TYPES
+
 const LEFT = 'LEFT'
 const RIGHT = 'RIGHT'
+
+// -- ACTION
 
 const Action = {
   left: (action) => ({ type: LEFT, payload: { action } }),
   right: (action) => ({ type: RIGHT, payload: { action } }),
 }
+
+// -- INIT
 
 export const init = (leftTopic, rightTopic) => {
   const [left, leftFx] = randomGif.init(leftTopic)
@@ -25,12 +31,16 @@ export const init = (leftTopic, rightTopic) => {
   ]
 }
 
+// -- VIEW
+
 export const view = (address, model) => {
   return <div>
     {randomGif.view(Signal.forwardTo(address, Action.left), model.left)}
     {randomGif.view(Signal.forwardTo(address, Action.right), model.right)}
   </div>
 }
+
+// -- UPDATE
 
 export const update = (action, model) => {
   switch (action.type) {

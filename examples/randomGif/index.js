@@ -3,10 +3,14 @@ import React from 'react'
 import { Observable } from 'rxjs'
 import * as Effects from '../../src/Effects'
 
+// -- TYPES
+
 const NEW_GIF = 'NEW_GIF'
 const GIF_ERROR = 'GIF_ERROR'
 const REQUEST_MORE = 'REQUEST_MORE'
 const CHANGE_TOPIC = 'CHANGE_TOPIC'
+
+// -- ACTION
 
 export const Action = {
   requestMore: () => ({ type: REQUEST_MORE }),
@@ -15,7 +19,11 @@ export const Action = {
   newGif: (url) => ({ type: NEW_GIF, payload: { url } }),
 }
 
-export const init = (topic) => [{ topic, url: 'waiting.gif' }, getRandomGif(topic)]
+// -- INIT
+
+export const init = (topic = 'dogs') => [{ topic, url: 'waiting.gif' }, getRandomGif(topic)]
+
+// -- VIEW
 
 export const view = (address, model) => {
   return <div>
@@ -24,6 +32,8 @@ export const view = (address, model) => {
     <img src={model.url} alt=""/>
   </div>
 }
+
+// -- UPDATE
 
 export const update = (action, model) => {
   switch (action.type) {
@@ -43,6 +53,8 @@ export const update = (action, model) => {
       return [model, Effects.none()]
   }
 }
+
+// -- EFFECTS
 
 const getRandomGif = (topic) => Effects.fromTask(
   Observable.fromPromise(
