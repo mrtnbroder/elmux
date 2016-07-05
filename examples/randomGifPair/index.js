@@ -1,7 +1,7 @@
 
 import React from 'react'
 import * as Signal from '../../src/Signal'
-import * as Effects from '../../src/Effects'
+import * as Cmds from '../../src/Cmds'
 import * as randomGif from '../randomGif'
 
 // -- TYPES
@@ -9,9 +9,9 @@ import * as randomGif from '../randomGif'
 const LEFT = 'LEFT'
 const RIGHT = 'RIGHT'
 
-// -- ACTION
+// -- MESSAGES
 
-const Action = {
+const Msg = {
   left: (action) => ({ type: LEFT, payload: { action } }),
   right: (action) => ({ type: RIGHT, payload: { action } }),
 }
@@ -24,10 +24,10 @@ export const init = (leftTopic, rightTopic) => {
 
   return [
     { left, right },
-    Effects.batch(
-      Effects.map(Action.left, leftFx),
-      Effects.map(Action.right, rightFx)
-    )
+    Cmds.batch([
+      Cmds.map(Msg.left, leftFx),
+      Cmds.map(Msg.right, rightFx)
+    ])
   ]
 }
 
@@ -35,8 +35,8 @@ export const init = (leftTopic, rightTopic) => {
 
 export const view = (address, model) => {
   return <div>
-    {randomGif.view(Signal.forwardTo(address, Action.left), model.left)}
-    {randomGif.view(Signal.forwardTo(address, Action.right), model.right)}
+    {randomGif.view(Signal.forwardTo(address, Msg.left), model.left)}
+    {randomGif.view(Signal.forwardTo(address, Msg.right), model.right)}
   </div>
 }
 
@@ -46,13 +46,13 @@ export const update = (action, model) => {
   switch (action.type) {
     case LEFT:
       const [left, leftFx] = randomGif.update(action.payload.action, model.left)
-      return [{ ...model, left }, Effects.map(Action.left, leftFx)]
+      return [{ ...model, left }, Cmds.map(Msg.left, leftFx)]
       break;
     case RIGHT:
       const [right, rightFx] = randomGif.update(action.payload.action, model.right)
-      return [{ ...model, right }, Effects.map(Action.right, rightFx)]
+      return [{ ...model, right }, Cmds.map(Msg.right, rightFx)]
       break;
     default:
-      return [model, Effects.none()]
+      return [model, Cmds.none]
   }
 }

@@ -1,13 +1,13 @@
 
 /**
- *  Effects.js
+ *  Cmds.js
  */
 
 import { Observable } from 'rxjs/Observable'
 import * as Signal from './Signal'
 import * as Task from './Task'
 
-export const none = Observable.empty
+export const none = Observable.empty()
 
 export const fromTask = (task, success, failure) =>
   Observable.create((observer) =>
@@ -18,14 +18,14 @@ export const fromTask = (task, success, failure) =>
     )
   )
 
-export const toTask = (address, effect) =>
-  effect.flatMap((action) =>
+export const toTask = (address, cmd) =>
+  cmd.flatMap((action) =>
     Signal.send(address, action)
   )
 
-export const batch = (...effects) =>
-  Observable.merge(...effects)
+export const batch = (cmds) =>
+  Observable.merge(...cmds)
 
-// TODO: needs to handle batched effects as well
-export const map = (func, effect) =>
-  Task.map(func, effect)
+// TODO: needs to handle batched cmds as well
+export const map = (func, cmd) =>
+  Task.map(func, cmd)
