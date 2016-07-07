@@ -17,8 +17,8 @@ export const StartApp = (config) => {
 
     return [newModel, Cmds.batch([accumulatedCmds, additionalCmds])]
   }
-  const update = (actions, [model]) => reduce(updateStep, [model, Cmds.none()], actions)
-  const inputs = Observable.merge(messages.signal, map((signal) => map(singleton, signal), config.inputs))
+  const update = (actions, [model]) => reduce(updateStep, [model, Cmds.none])(actions)
+  const inputs = Observable.merge(messages.signal, map(singleton, config.inputs))
   const cmdsAndModel = inputs.startWith(config.init).scan(flip(update)).publishReplay().refCount()
   const model = cmdsAndModel.map(nth(0))
   const html = model.map(curry(config.view)(address))
