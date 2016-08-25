@@ -1,3 +1,3 @@
 # Elmux
 
-Elmux brings the Elm Architecture to React
+Elmux brings the Elm architecture to JS
