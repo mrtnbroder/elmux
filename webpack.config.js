@@ -1,26 +1,31 @@
 
-var path = require('path');
+const webpack = require('webpack')
+const package = require('./package')
 
 module.exports = {
-  devtool: 'eval',
-  resolve: {
-    root: [__dirname],
-    extensions: ['', '.js', 'jsx'],
-  },
+
   output: {
-    path: './lib',
-    libraryTarget: 'umd',
     library: 'elmux',
-    filename: 'index.js'
+    libraryTarget: 'umd'
   },
+
+  externals: Object.keys(package.dependencies),
+
   module: {
     loaders: [
-      {
-        test: /\.(js)?$/,
-        loaders: ['babel'],
-        exclude: /node_modules/,
-        include: path.resolve('.')
-      }
+      { test: /\.js$/, exclude: /node_modules/, loader: 'babel' }
     ]
-  }
-};
+  },
+
+  node: {
+    Buffer: false
+  },
+
+  plugins: [
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    })
+  ]
+
+}

@@ -1,1 +1,9 @@
-{ "presets": ["es2015", "react"] }
+{
+  "presets": ["./presets/es2015"],
+  "plugins": ["transform-export-extensions"],
+  "env": {
+    "cjs": {
+      "plugins": ["add-module-exports"]
+    }
+  }
+}
