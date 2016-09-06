@@ -26,6 +26,5 @@ export const toTask = (address, cmd) =>
 export const batch = (cmds) =>
   Observable.merge(...cmds)
 
-// TODO: needs to handle batched cmds as well
 export const map = (func, cmd) =>
   Task.map(func, cmd)
