@@ -9,15 +9,15 @@ export const merge = Observable.merge
 
 export const Mailbox = (initialValue) => {
   const signal = new BehaviorSubject(initialValue)
-  const address = (message) => signal.next(message)
+  const address = (msg) => signal.next(msg)
 
   return { signal, address }
 }
 
 export const forwardTo = (address, tag) =>
-  (message) => address(tag(message))
+  (msg) => address(tag(msg))
 
-export const send = (address, message) => {
-  address(message)
+export const send = (address, msg) => {
+  address(msg)
   return Observable.empty()
 }

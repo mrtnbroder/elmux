@@ -5,24 +5,25 @@
 
 import { Observable } from 'rxjs'
 import * as Signal from './Signal'
-import * as Cmds from './Cmds'
+import * as Cmd from './Cmd'
+import * as Task from './Task'
 import { reduce, map, flip, nth, curry } from 'ramda'
 
 export const StartApp = (config) => {
   const messages = Signal.Mailbox([])
-  const singleton = (action) => [action]
+  const singleton = (msg) => [msg]
   const address = Signal.forwardTo(messages.address, singleton)
-  const updateStep = ([oldModel, accumulatedCmds], action) => {
-    const [newModel, additionalCmds] = config.update(action, oldModel)
+  const updateStep = ([oldModel, accumulatedCmds], msg) => {
+    const [newModel, additionalCmds] = config.update(msg, oldModel)
 
-    return [newModel, Cmds.batch([accumulatedCmds, additionalCmds])]
+    return [newModel, Cmd.batch([accumulatedCmds, additionalCmds])]
   }
-  const update = (actions, [model]) => reduce(updateStep, [model, Cmds.none])(actions)
-  const inputs = Observable.merge(messages.signal, map(singleton, config.inputs))
-  const cmdsAndModel = inputs.startWith(config.init).scan(flip(update)).publishReplay().refCount()
+  const update = (msgs, [model]) => reduce(updateStep, [model, Cmd.none])(msgs)
+  const subscriptions = Observable.merge(messages.signal, map(singleton, config.subscriptions))
+  const cmdsAndModel = subscriptions.startWith(config.init).scan(flip(update)).publishReplay().refCount()
   const model = cmdsAndModel.map(nth(0))
   const html = model.map(curry(config.view)(address))
-  const tasks = cmdsAndModel.flatMap(([_, cmd]) => Cmds.toTask(address, cmd))
+  const tasks = cmdsAndModel.flatMap(([_, cmd]) => Task.toTask(address, cmd))
 
   return {
     model,

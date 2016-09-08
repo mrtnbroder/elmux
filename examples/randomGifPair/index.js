@@ -1,7 +1,7 @@
 
 import React from 'react'
 import * as Signal from '../../src/Signal'
-import * as Cmds from '../../src/Cmds'
+import * as Cmd from '../../src/Cmd'
 import * as randomGif from '../randomGif'
 
 // -- TYPES
@@ -12,8 +12,8 @@ const RIGHT = 'RIGHT'
 // -- MESSAGES
 
 const Msg = {
-  left: (action) => ({ type: LEFT, payload: { action } }),
-  right: (action) => ({ type: RIGHT, payload: { action } }),
+  left: (msg) => ({ type: LEFT, payload: { msg } }),
+  right: (msg) => ({ type: RIGHT, payload: { msg } }),
 }
 
 // -- INIT
@@ -24,9 +24,9 @@ export const init = (leftTopic, rightTopic) => {
 
   return [
     { left, right },
-    Cmds.batch([
-      Cmds.map(Msg.left, leftFx),
-      Cmds.map(Msg.right, rightFx)
+    Cmd.batch([
+      Cmd.map(Msg.left, leftFx),
+      Cmd.map(Msg.right, rightFx)
     ])
   ]
 }
@@ -42,17 +42,17 @@ export const view = (address, model) => {
 
 // -- UPDATE
 
-export const update = (action, model) => {
-  switch (action.type) {
+export const update = (msg, model) => {
+  switch (msg.type) {
     case LEFT:
-      const [left, leftFx] = randomGif.update(action.payload.action, model.left)
-      return [{ ...model, left }, Cmds.map(Msg.left, leftFx)]
+      const [left, leftFx] = randomGif.update(msg.payload.msg, model.left)
+      return [{ ...model, left }, Cmd.map(Msg.left, leftFx)]
       break;
     case RIGHT:
-      const [right, rightFx] = randomGif.update(action.payload.action, model.right)
-      return [{ ...model, right }, Cmds.map(Msg.right, rightFx)]
+      const [right, rightFx] = randomGif.update(msg.payload.msg, model.right)
+      return [{ ...model, right }, Cmd.map(Msg.right, rightFx)]
       break;
     default:
-      return [model, Cmds.none]
+      return [model, Cmd.none]
   }
 }

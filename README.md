@@ -16,7 +16,7 @@ const { model, html, tasks } = StartApp({
   init: init('dogs', 'cats'),
   view,
   update,
-  inputs: []
+  subscriptions: []
 })
 
 runApp({
