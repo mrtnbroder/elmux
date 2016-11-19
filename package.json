@@ -29,8 +29,8 @@
     "virtual dom",
     "side effects"
   ],
-  "author": "Martin Broder <hello@martinbroder.com>",
-  "license": "MIT",
+  "author": "Martin Broder <hello@martinbroder.com> <https://martinbroder.com>",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/mrtnbroder/elmux/issues"
   },
