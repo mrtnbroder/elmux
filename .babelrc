@@ -1,6 +1,5 @@
 {
-  "presets": ["./presets/es2015"],
-  "plugins": ["transform-export-extensions"],
+  "presets": ["./presets/es2015", "stage-1", "react"],
   "env": {
     "cjs": {
       "plugins": ["add-module-exports"]
