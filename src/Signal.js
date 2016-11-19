@@ -3,9 +3,9 @@
  *  Signal.js
  */
 
-import { Observable, BehaviorSubject } from 'rxjs'
+import { Observable as O, BehaviorSubject } from 'rxjs'
 
-export const merge = Observable.merge
+export const merge = O.merge
 
 export const Mailbox = (initialValue) => {
   const signal = new BehaviorSubject(initialValue)
@@ -19,5 +19,5 @@ export const forwardTo = (address, tag) =>
 
 export const send = (address, msg) => {
   address(msg)
-  return Observable.empty()
+  return O.empty()
 }

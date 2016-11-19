@@ -3,15 +3,16 @@
  *  Task
  */
 
-import { Observable } from 'rxjs'
+import { Observable as O } from 'rxjs'
 import * as Signal from './Signal'
 
-export const perform = (onFail, onSuccess, task) =>
-  Observable.create((observer) =>
+// perform :: (a -> msg) -> Task Never a -> Cmd msg
+export const perform = (onSuccess, onError, task) =>
+  O.create((observer) =>
     task.subscribe(
       (res) => observer.next(onSuccess(res)),
-      (err) => observer.next(onFail(err)),
-      () => observer.complete()
+      (err) => observer.next(onError(err)),
+      () => observer.complete(),
     )
   )
 
@@ -20,8 +21,9 @@ export const toTask = (address, cmd) =>
     Signal.send(address, msg)
   )
 
+// map :: (a -> b) -> Task x a -> Task x b
 export const map = (func, taskA) =>
-  Observable.create((observer) =>
+  O.create((observer) =>
     taskA.subscribe(
       (a) => {
         observer.next(func(a))
