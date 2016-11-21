@@ -19,17 +19,19 @@ export const program = (config) => {
     return [newModel, Cmd.batch([accumulatedCmds, additionalCmds])]
   }
   const update = (msgs, [model]) => reduce(updateStep, [model, Cmd.none])(msgs)
-  const subscriptions = O.merge(messages.signal, map(singleton, config.subscriptions))
-  const cmdsAndModel = subscriptions.startWith(config.init).scan(flip(update)).publishReplay().refCount()
-  const model = cmdsAndModel.map(nth(0))
-  const html = model.map(curry(config.view)(address))
+  const cmdsAndModel = messages.signal.startWith(config.init).scan(flip(update)).publishReplay().refCount()
+  const model = map(nth(0))(cmdsAndModel)
+  const subscriptions = map(config.subscriptions)(model)
+  const html = map(curry(config.view)(address))(model)
+  const subs = subscriptions.flatMap((sub) => Task.toTask(address, sub))
   const tasks = cmdsAndModel.flatMap(([_, cmd]) => Task.toTask(address, cmd))
 
   return {
     model,
     html,
+    subs,
     tasks
   }
 }
 
-export const beginnerProgram = (app) => O.merge(app.model, app.html, app.tasks).subscribe()
+export const beginnerProgram = (app) => O.merge(app.model, app.html, app.tasks, app.subs).subscribe()
