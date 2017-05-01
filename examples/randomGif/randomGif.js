@@ -56,8 +56,8 @@ export const update = (msg, model) => {
 // -- COMMANDS
 
 const getRandomGif = (topic) => Task.perform(
-  Msg.newGif,
   Msg.gifError,
+  Msg.newGif,
   O.fromPromise(
     fetch(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=${topic}`)
     .then((r) => r.json())

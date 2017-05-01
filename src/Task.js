@@ -4,29 +4,28 @@
  */
 
 import { Observable as O } from 'rxjs'
-import * as Signal from './Signal'
 
-// perform :: (a -> msg) -> Task Never a -> Cmd msg
-export const perform = (onSuccess, onError, task) =>
+// perform : (x -> msg) -> (a -> msg) -> Task x a -> Cmd msg
+export const perform = (onFail, onSuccess, task) =>
   O.create((observer) =>
     task.subscribe(
-      (res) => observer.next(onSuccess(res)),
-      (err) => observer.next(onError(err)),
-      () => observer.complete(),
+      (res) => {
+        observer.next(onSuccess(res))
+        observer.complete()
+      },
+      (err) => {
+        observer.next(onFail(err))
+        observer.complete()
+      }
     )
   )
 
-export const toTask = (address, cmd) =>
-  cmd.flatMap((msg) =>
-    Signal.send(address, msg)
-  )
-
-// map :: (a -> b) -> Task x a -> Task x b
+// map : (a -> b) -> Task x a -> Task x b
 export const map = (func, taskA) =>
   O.create((observer) =>
     taskA.subscribe(
-      (a) => {
-        observer.next(func(a))
+      (x) => {
+        observer.next(func(x))
         observer.complete()
       }
     )

@@ -6,10 +6,17 @@
 import { Observable as O } from 'rxjs'
 import * as Signal from './Signal'
 import * as Cmd from './Cmd'
+import * as Sub from './Sub'
 import * as Task from './Task'
 import { reduce, map, flip, nth, curry } from 'ramda'
 
-export const program = (config) => {
+const defaultConfig = (conf) => ({
+  subscriptions: () => Sub.none,
+  ...conf
+})
+
+export const program = (conf) => {
+  const config = defaultConfig(conf)
   const messages = Signal.Mailbox([])
   const singleton = (msg) => [msg]
   const address = Signal.forwardTo(messages.address, singleton)
@@ -23,15 +30,15 @@ export const program = (config) => {
   const model = map(nth(0))(cmdsAndModel)
   const subscriptions = map(config.subscriptions)(model)
   const html = map(curry(config.view)(address))(model)
-  const subs = subscriptions.flatMap((sub) => Task.toTask(address, sub))
-  const tasks = cmdsAndModel.flatMap(([_, cmd]) => Task.toTask(address, cmd))
+  const subs = subscriptions.flatMap((sub) => Sub.toTask(address, sub))
+  const tasks = cmdsAndModel.flatMap(([_, cmd]) => Cmd.toTask(address, cmd))
 
   return {
     model,
     html,
     subs,
-    tasks
+    tasks,
   }
 }
 
-export const beginnerProgram = (app) => O.merge(app.model, app.html, app.tasks, app.subs).subscribe()
+export const runApp = (app) => O.merge(app.model, app.html, app.tasks, app.subs).subscribe()
